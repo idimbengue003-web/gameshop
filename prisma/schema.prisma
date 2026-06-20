@@ -14,27 +14,27 @@ datasource db {
 // PRODUITS
 // ============================================================
 model Product {
-  id               String   @id @default(cuid())
-  name             String
-  description      String
-  price            Int
-  oldPrice         Int?
-  category         String
-  game             String?
-  emoji            String   @default("🎮")
-  badge            String?
-  popular          Boolean  @default(false)
-  instantDelivery  Boolean  @default(false)
-  useUniqueCodes   Boolean  @default(false)
-  deliveryContent  String?
-  deliveryTime     String?
-  stock            Int      @default(0)
-  active           Boolean  @default(true)
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
+  id              String   @id @default(cuid())
+  name            String
+  description     String
+  price           Int
+  oldPrice        Int?
+  category        String
+  game            String?
+  emoji           String   @default("🎮")
+  badge           String?
+  popular         Boolean  @default(false)
+  instantDelivery Boolean  @default(false)
+  useUniqueCodes  Boolean  @default(false)
+  deliveryContent String?
+  deliveryTime    String?
+  stock           Int      @default(0)
+  active          Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 
-  codes   CodeItem[]
-  orders  Order[]
+  codes  CodeItem[]
+  orders Order[]
 
   @@index([category])
   @@index([active])
@@ -44,16 +44,16 @@ model Product {
 // CODES UNIQUES (stock par produit)
 // ============================================================
 model CodeItem {
-  id          String   @id @default(cuid())
-  productId   String
-  content     String
-  status      String   @default("available")
-  orderId     String?  @unique
-  createdAt   DateTime @default(now())
-  soldAt      DateTime?
+  id        String    @id @default(cuid())
+  productId String
+  content   String
+  status    String    @default("available")
+  orderId   String?   @unique
+  createdAt DateTime  @default(now())
+  soldAt    DateTime?
 
   product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
-  order   Order?  @relation(fields: [orderId], references: [id])
+  order   Order?
 
   @@index([productId, status])
   @@index([status])
