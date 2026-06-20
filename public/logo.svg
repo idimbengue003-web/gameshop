@@ -1,0 +1,27 @@
+<svg width="200" height="48" viewBox="0 0 200 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="logoGrad" x1="0" y1="0" x2="48" y2="48" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0EA5E9"/>
+      <stop offset="1" stop-color="#0284C7"/>
+    </linearGradient>
+    <linearGradient id="textGrad" x1="0" y1="0" x2="0" y2="48" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0C4A6E"/>
+      <stop offset="1" stop-color="#0369A1"/>
+    </linearGradient>
+  </defs>
+  <!-- Icône manette stylisée -->
+  <rect x="2" y="2" width="44" height="44" rx="12" fill="url(#logoGrad)"/>
+  <g fill="#FFFFFF">
+    <!-- Corps manette -->
+    <path d="M14 18 C14 16, 16 15, 18 15 L30 15 C32 15, 34 16, 34 18 L34 28 C34 31, 32 33, 29 33 C28 33, 27 32, 26 31 L24 29 L22 31 C21 32, 20 33, 19 33 C16 33, 14 31, 14 28 Z"/>
+    <!-- Croix directionnelle -->
+    <rect x="17" y="20" width="2.5" height="6" fill="#0EA5E9"/>
+    <rect x="15" y="22" width="6.5" height="2.5" fill="#0EA5E9"/>
+    <!-- Boutons A B -->
+    <circle cx="28" cy="22" r="1.6" fill="#0EA5E9"/>
+    <circle cx="31" cy="25" r="1.6" fill="#0EA5E9"/>
+  </g>
+  <!-- Texte -->
+  <text x="56" y="22" font-family="Arial, sans-serif" font-weight="900" font-size="16" fill="url(#textGrad)" letter-spacing="0.5">GAME SHOP</text>
+  <text x="56" y="38" font-family="Arial, sans-serif" font-weight="700" font-size="13" fill="#0EA5E9" letter-spacing="3">221</text>
+</svg>
