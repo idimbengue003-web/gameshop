@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Header } from "@/components/site/header";
 import { Hero } from "@/components/site/hero";
 import { ProductsSection } from "@/components/site/products";
@@ -9,12 +9,48 @@ import { WhyUs } from "@/components/site/why-us";
 import { Contact } from "@/components/site/contact";
 import { Footer } from "@/components/site/footer";
 import { OrderModal } from "@/components/site/order-modal";
+import { AdminLogin } from "@/components/admin/admin-login";
+import { AdminPanel } from "@/components/admin/admin-panel";
 import { Product } from "@/data/products";
 
+type View = "site" | "admin-login" | "admin";
+
 export default function Home() {
+  const [view, setView] = useState<View>("site");
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
   const productsRef = useRef<HTMLDivElement>(null);
+
+  // Gestion du hash #admin
+  useEffect(() => {
+    const checkHash = () => {
+      const isHashAdmin = window.location.hash === "#admin";
+      const isAdminAuthed = sessionStorage.getItem("gs221_admin") === "1";
+      if (isHashAdmin) {
+        setView(isAdminAuthed ? "admin" : "admin-login");
+      } else {
+        setView("site");
+      }
+    };
+
+    checkHash();
+    window.addEventListener("hashchange", checkHash);
+    return () => window.removeEventListener("hashchange", checkHash);
+  }, []);
+
+  const goToAdmin = () => {
+    window.location.hash = "#admin";
+  };
+
+  const exitAdmin = () => {
+    window.location.hash = "";
+    setView("site");
+  };
+
+  const handleAdminLogout = () => {
+    sessionStorage.removeItem("gs221_admin");
+    exitAdmin();
+  };
 
   const handleOrder = (product: Product) => {
     setSelectedProduct(product);
@@ -28,6 +64,24 @@ export default function Home() {
     }
   };
 
+  // ========== VUE ADMIN LOGIN ==========
+  if (view === "admin-login") {
+    return (
+      <AdminLogin
+        onSuccess={() => setView("admin")}
+        onBack={exitAdmin}
+      />
+    );
+  }
+
+  // ========== VUE ADMIN PANEL ==========
+  if (view === "admin") {
+    return (
+      <AdminPanel onLogout={handleAdminLogout} onExitToSite={exitAdmin} />
+    );
+  }
+
+  // ========== VUE SITE CLIENT ==========
   return (
     <div className="min-h-screen flex flex-col bg-white">
       <Header onOrderClick={scrollToProducts} />
@@ -44,7 +98,7 @@ export default function Home() {
         <Contact />
       </main>
 
-      <Footer />
+      <Footer onAdminClick={goToAdmin} />
 
       <OrderModal
         product={selectedProduct}

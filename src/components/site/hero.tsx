@@ -43,8 +43,11 @@ export function Hero({ onExplore }: HeroProps) {
 
             <p className="mt-5 text-base md:text-lg text-slate-600 max-w-xl mx-auto lg:mx-0">
               Recharges PUBG, Free Fire, Valorant. Comptes Fortnite, GTA, COD.
-              Cartes Steam, Google Play, PSN, Netflix. Paiement Wave,
-              livraison en {siteConfig.deliveryTime}.
+              Cartes Steam, Google Play, PSN, Netflix. Paiement Wave,{" "}
+              <strong className="text-sky-700">
+                livraison automatique ⚡
+              </strong>{" "}
+              sur le site.
             </p>
 
             {/* CTA */}
@@ -57,17 +60,13 @@ export function Hero({ onExplore }: HeroProps) {
                 Voir les offres
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
-              <a
-                href={`https://wa.me/${siteConfig.whatsappNumber}`}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
+              <a href="#guide">
                 <Button
                   size="lg"
                   variant="outline"
-                  className="border-green-500 text-green-700 hover:bg-green-50 h-13 px-7 text-base w-full sm:w-auto"
+                  className="border-sky-500 text-sky-700 hover:bg-sky-50 h-13 px-7 text-base w-full sm:w-auto"
                 >
-                  Commander sur WhatsApp
+                  Comment ça marche ?
                 </Button>
               </a>
             </div>
@@ -75,11 +74,11 @@ export function Hero({ onExplore }: HeroProps) {
             {/* Trust badges */}
             <div className="mt-8 grid grid-cols-3 gap-4 max-w-md mx-auto lg:mx-0">
               <div className="text-center lg:text-left">
-                <div className="flex items-center justify-center lg:justify-start gap-1.5 text-sky-700">
-                  <Clock className="h-4 w-4" />
-                  <span className="text-sm font-bold">5-30 min</span>
+                <div className="flex items-center justify-center lg:justify-start gap-1.5 text-amber-600">
+                  <Zap className="h-4 w-4 fill-current" />
+                  <span className="text-sm font-bold">Auto ⚡</span>
                 </div>
-                <p className="text-xs text-slate-500 mt-0.5">Livraison</p>
+                <p className="text-xs text-slate-500 mt-0.5">Livraison site</p>
               </div>
               <div className="text-center lg:text-left">
                 <div className="flex items-center justify-center lg:justify-start gap-1.5 text-sky-700">
@@ -104,13 +103,25 @@ export function Hero({ onExplore }: HeroProps) {
               {/* Cards flottantes */}
               <div className="space-y-3">
                 <div className="bg-white rounded-2xl shadow-lg border border-sky-100 p-4 transform -rotate-2 hover:rotate-0 transition-transform">
-                  <div className="text-3xl mb-2">💎</div>
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="text-3xl">💎</div>
+                    <Badge className="text-[9px] py-0 bg-amber-500 text-white">
+                      <Zap className="h-2 w-2 mr-0.5 fill-current" />
+                      Instantané
+                    </Badge>
+                  </div>
                   <div className="text-xs font-bold text-slate-900">325 UC</div>
                   <div className="text-xs text-slate-500">PUBG Mobile</div>
                   <div className="text-sm font-black text-sky-700 mt-1">5 000 FCFA</div>
                 </div>
                 <div className="bg-white rounded-2xl shadow-lg border border-sky-100 p-4 transform rotate-2 hover:rotate-0 transition-transform">
-                  <div className="text-3xl mb-2">🎮</div>
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="text-3xl">🎮</div>
+                    <Badge className="text-[9px] py-0 bg-amber-500 text-white">
+                      <Zap className="h-2 w-2 mr-0.5 fill-current" />
+                      Instantané
+                    </Badge>
+                  </div>
                   <div className="text-xs font-bold text-slate-900">Carte Steam</div>
                   <div className="text-xs text-slate-500">25€</div>
                   <div className="text-sm font-black text-sky-700 mt-1">17 000 FCFA</div>
@@ -118,13 +129,25 @@ export function Hero({ onExplore }: HeroProps) {
               </div>
               <div className="space-y-3 mt-6">
                 <div className="bg-white rounded-2xl shadow-lg border border-sky-100 p-4 transform rotate-2 hover:rotate-0 transition-transform">
-                  <div className="text-3xl mb-2">🔥</div>
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="text-3xl">🔥</div>
+                    <Badge className="text-[9px] py-0 bg-amber-500 text-white">
+                      <Zap className="h-2 w-2 mr-0.5 fill-current" />
+                      Instantané
+                    </Badge>
+                  </div>
                   <div className="text-xs font-bold text-slate-900">310 Diamants</div>
                   <div className="text-xs text-slate-500">Free Fire</div>
                   <div className="text-sm font-black text-sky-700 mt-1">4 000 FCFA</div>
                 </div>
                 <div className="bg-gradient-to-br from-sky-600 to-cyan-600 rounded-2xl shadow-lg p-4 text-white transform -rotate-2 hover:rotate-0 transition-transform">
-                  <div className="text-3xl mb-2">🎯</div>
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="text-3xl">🎯</div>
+                    <Badge className="text-[9px] py-0 bg-white/20 text-white">
+                      <Zap className="h-2 w-2 mr-0.5 fill-current" />
+                      Instantané
+                    </Badge>
+                  </div>
                   <div className="text-xs font-bold">Compte Fortnite</div>
                   <div className="text-xs text-sky-100">Skins rares</div>
                   <div className="text-sm font-black mt-1">25 000 FCFA</div>

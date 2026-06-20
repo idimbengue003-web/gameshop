@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -9,10 +9,19 @@ import {
   ProductCategory,
   categoryLabels,
   categoryEmojis,
-  products,
+  fetchProducts,
 } from "@/data/products";
 import { formatPrice } from "@/config/site";
-import { Waves, Check, Flame, Tag } from "lucide-react";
+import {
+  Waves,
+  Check,
+  Flame,
+  Tag,
+  Zap,
+  Clock,
+  Loader2,
+  PackageOpen,
+} from "lucide-react";
 
 interface ProductsSectionProps {
   onOrder: (product: Product) => void;
@@ -22,13 +31,43 @@ export function ProductsSection({ onOrder }: ProductsSectionProps) {
   const [activeCategory, setActiveCategory] = useState<ProductCategory | "all">(
     "all"
   );
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const data = await fetchProducts();
+        if (!cancelled) {
+          setProducts(data);
+          setError("");
+        }
+      } catch (err) {
+        if (!cancelled) {
+          setError("Impossible de charger les produits. Réessayez plus tard.");
+          console.error(err);
+        }
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const filtered =
     activeCategory === "all"
       ? products
       : products.filter((p) => p.category === activeCategory);
 
-  const categories: Array<{ key: ProductCategory | "all"; label: string; emoji: string }> = [
+  const categories: Array<{
+    key: ProductCategory | "all";
+    label: string;
+    emoji: string;
+  }> = [
     { key: "all", label: "Tout voir", emoji: "✨" },
     { key: "comptes", label: categoryLabels.comptes, emoji: categoryEmojis.comptes },
     { key: "recharges", label: categoryLabels.recharges, emoji: categoryEmojis.recharges },
@@ -48,7 +87,7 @@ export function ProductsSection({ onOrder }: ProductsSectionProps) {
           </h2>
           <p className="mt-3 text-slate-600 max-w-2xl mx-auto">
             Catalogue complet de comptes gaming, recharges UC/diamants/VP et cartes
-            cadeaux. Prix en FCFA, paiement Wave, livraison instantanée.
+            cadeaux. Prix en FCFA, paiement Wave, livraison automatique ⚡.
           </p>
         </div>
 
@@ -69,9 +108,7 @@ export function ProductsSection({ onOrder }: ProductsSectionProps) {
               {cat.key !== "all" && (
                 <span
                   className={`ml-2 text-xs ${
-                    activeCategory === cat.key
-                      ? "text-sky-100"
-                      : "text-slate-400"
+                    activeCategory === cat.key ? "text-sky-100" : "text-slate-400"
                   }`}
                 >
                   {products.filter((p) => p.category === cat.key).length}
@@ -81,20 +118,47 @@ export function ProductsSection({ onOrder }: ProductsSectionProps) {
           ))}
         </div>
 
-        {/* Grille produits */}
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-5">
-          {filtered.map((product) => (
-            <ProductCard key={product.id} product={product} onOrder={onOrder} />
-          ))}
-        </div>
+        {/* États */}
+        {loading ? (
+          <div className="flex flex-col items-center justify-center py-20">
+            <Loader2 className="h-10 w-10 animate-spin text-sky-600 mb-3" />
+            <p className="text-slate-500 text-sm">Chargement des produits...</p>
+          </div>
+        ) : error ? (
+          <div className="text-center py-20 text-red-600">
+            <PackageOpen className="h-12 w-12 mx-auto mb-3 text-red-300" />
+            <p className="font-medium">{error}</p>
+          </div>
+        ) : filtered.length === 0 ? (
+          <div className="text-center py-20 text-slate-500">
+            <PackageOpen className="h-12 w-12 mx-auto mb-3 text-slate-300" />
+            <p className="font-medium">Aucun produit dans cette catégorie.</p>
+          </div>
+        ) : (
+          <>
+            {/* Grille produits */}
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-5">
+              {filtered.map((product) => (
+                <ProductCard
+                  key={product.id}
+                  product={product}
+                  onOrder={onOrder}
+                />
+              ))}
+            </div>
 
-        {/* Note bas de section */}
-        <div className="mt-10 text-center">
-          <p className="text-sm text-slate-500">
-            🔒 Tous les produits sont garantis. En cas de problème, remboursement
-            ou échange sous 24h.
-          </p>
-        </div>
+            {/* Note bas de section */}
+            <div className="mt-10 text-center">
+              <p className="text-sm text-slate-500">
+                🔒 Tous les produits sont garantis. Les produits{" "}
+                <span className="font-medium text-amber-600">
+                  ⚡ Instantané
+                </span>{" "}
+                sont livrés automatiquement après paiement.
+              </p>
+            </div>
+          </>
+        )}
       </div>
     </section>
   );
@@ -118,26 +182,33 @@ function ProductCard({
       }`}
       onClick={() => onOrder(product)}
     >
-      {/* Badge promo / popularité */}
-      {product.badge && (
-        <div className="absolute top-3 right-3 z-10">
+      {/* Badges en haut */}
+      <div className="absolute top-3 right-3 z-10 flex flex-col gap-1 items-end">
+        {product.instantDelivery && (
+          <Badge className="bg-amber-500 text-white shadow-md text-[10px] gap-0.5">
+            <Zap className="h-2.5 w-2.5 fill-current" />
+            Instantané
+          </Badge>
+        )}
+        {product.badge && (
           <Badge
             className={`${
               product.badge === "PROMO" || product.badge === "ÉCONOMIE"
                 ? "bg-red-500 text-white"
                 : product.badge === "POPULAIRE" || product.badge === "TOP VENTE"
-                  ? "bg-amber-500 text-white"
+                  ? "bg-sky-600 text-white"
                   : "bg-sky-600 text-white"
-            } shadow-md text-xs`}
+            } shadow-md text-[10px]`}
           >
-            {product.badge === "PROMO" && <Tag className="h-3 w-3 mr-1" />}
-            {(product.badge === "POPULAIRE" || product.badge === "TOP VENTE") && (
-              <Flame className="h-3 w-3 mr-1" />
+            {product.badge === "PROMO" && <Tag className="h-2.5 w-2.5 mr-0.5" />}
+            {(product.badge === "POPULAIRE" ||
+              product.badge === "TOP VENTE") && (
+              <Flame className="h-2.5 w-2.5 mr-0.5" />
             )}
             {product.badge}
           </Badge>
-        </div>
-      )}
+        )}
+      </div>
 
       <div className="p-4 md:p-5">
         {/* Emoji + jeu */}
@@ -159,6 +230,21 @@ function ProductCard({
         <p className="text-xs text-slate-500 mt-1.5 line-clamp-2 min-h-[2rem]">
           {product.description}
         </p>
+
+        {/* Délai */}
+        <div className="mt-2 text-xs">
+          {product.instantDelivery ? (
+            <span className="inline-flex items-center gap-1 text-amber-600 font-medium">
+              <Zap className="h-3 w-3 fill-current" />
+              Livraison automatique ⚡
+            </span>
+          ) : (
+            <span className="inline-flex items-center gap-1 text-slate-500">
+              <Clock className="h-3 w-3" />
+              Livraison {product.deliveryTime}
+            </span>
+          )}
+        </div>
 
         {/* Prix */}
         <div className="mt-3 flex items-baseline gap-2 flex-wrap">
@@ -197,7 +283,7 @@ function ProductCard({
           </span>
           <span className="flex items-center gap-0.5">
             <Check className="h-3 w-3 text-green-600" />
-            Livraison 5-30 min
+            {product.instantDelivery ? "Auto ⚡" : "Garanti"}
           </span>
         </div>
       </div>

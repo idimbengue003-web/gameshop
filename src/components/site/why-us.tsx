@@ -4,14 +4,14 @@ export function WhyUs() {
   const reasons = [
     {
       icon: Zap,
-      title: "Livraison instantanée",
-      desc: "Recharges et codes envoyés en 5 à 30 minutes après confirmation du paiement Wave. Comptes livrés en moins d'1 heure.",
+      title: "Livraison automatique ⚡",
+      desc: "Pour les produits ⚡, le code ou les identifiants du compte s'affichent immédiatement sur le site après votre paiement Wave. Aucune attente, aucun échange.",
       color: "bg-amber-100 text-amber-700",
     },
     {
       icon: Wallet,
       title: "Paiement Wave facile",
-      desc: "Payez en 1 clic via Wave, le mobile money n°1 au Sénégal. Aucun frais caché, montant exact à envoyer.",
+      desc: "Payez en 1 clic via Wave, le mobile money n°1 au Sénégal. Aucun frais caché, montant exact à envoyer au numéro affiché.",
       color: "bg-sky-100 text-sky-700",
     },
     {
@@ -23,13 +23,13 @@ export function WhyUs() {
     {
       icon: BadgeCheck,
       title: "Meilleurs prix",
-      desc: "Tarifs les plus bas du marché sénégalais. Promos régulières et codes de réduction sur WhatsApp.",
+      desc: "Tarifs les plus bas du marché sénégalais. Promos régulières et codes de réduction annoncés sur Instagram.",
       color: "bg-purple-100 text-purple-700",
     },
     {
       icon: Headphones,
       title: "Support 24/7",
-      desc: "Une question ? Notre équipe répond sur WhatsApp à toute heure, tous les jours. Aide personnalisée.",
+      desc: "Une question ? Notre équipe répond sur Instagram à toute heure, tous les jours. Aide personnalisée pour chaque commande.",
       color: "bg-pink-100 text-pink-700",
     },
     {

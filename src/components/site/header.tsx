@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Menu, X, Waves, MessageCircle, Instagram } from "lucide-react";
-import { siteConfig, getWhatsAppLink } from "@/config/site";
+import { Menu, X, Waves, Instagram, Shield } from "lucide-react";
+import { siteConfig } from "@/config/site";
 
 interface HeaderProps {
   onOrderClick?: () => void;
@@ -36,13 +36,24 @@ export function Header({ onOrderClick }: HeaderProps) {
     >
       <div className="container mx-auto px-4 max-w-7xl">
         <div className="flex items-center justify-between h-16 md:h-20">
-          {/* Logo */}
-          <a href="#" className="flex items-center gap-2 flex-shrink-0">
-            <img
-              src="/logo.svg"
-              alt="GAME SHOP 221"
-              className="h-9 md:h-11 w-auto"
-            />
+          {/* Logo stylé */}
+          <a href="#" className="flex items-center gap-3 flex-shrink-0 group">
+            <div className="relative">
+              <div className="absolute inset-0 bg-gradient-to-br from-sky-400 to-cyan-400 rounded-xl blur-md opacity-40 group-hover:opacity-70 transition-opacity" />
+              <img
+                src="/logo/gameshop221.jpg"
+                alt="GAME SHOP 221"
+                className="relative h-11 w-11 md:h-14 md:w-14 rounded-xl object-cover shadow-md ring-2 ring-sky-200"
+              />
+            </div>
+            <div className="flex flex-col leading-none">
+              <span className="text-lg md:text-xl font-black bg-gradient-to-r from-sky-700 to-cyan-600 bg-clip-text text-transparent tracking-tight">
+                GAME SHOP
+              </span>
+              <span className="text-[10px] md:text-xs font-bold text-slate-500 tracking-[0.3em] mt-0.5">
+                2 2 1
+              </span>
+            </div>
           </a>
 
           {/* Nav desktop */}
@@ -69,20 +80,6 @@ export function Header({ onOrderClick }: HeaderProps) {
               aria-label="Instagram"
             >
               <Instagram className="h-5 w-5 text-slate-700 hover:text-pink-600" />
-            </a>
-            <a
-              href={getWhatsAppLink("Bonjour GAME SHOP 221 👋")}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <Button
-                variant="outline"
-                size="sm"
-                className="border-green-500 text-green-700 hover:bg-green-50"
-              >
-                <MessageCircle className="mr-1.5 h-4 w-4" />
-                WhatsApp
-              </Button>
             </a>
             <a href="#produits">
               <Button
@@ -124,16 +121,16 @@ export function Header({ onOrderClick }: HeaderProps) {
             ))}
             <div className="pt-2 px-4 flex flex-col gap-2">
               <a
-                href={getWhatsAppLink("Bonjour GAME SHOP 221 👋")}
+                href={siteConfig.instagram}
                 target="_blank"
                 rel="noopener noreferrer"
               >
                 <Button
                   variant="outline"
-                  className="w-full border-green-500 text-green-700 hover:bg-green-50"
+                  className="w-full border-pink-500 text-pink-700 hover:bg-pink-50"
                 >
-                  <MessageCircle className="mr-2 h-4 w-4" />
-                  WhatsApp
+                  <Instagram className="mr-2 h-4 w-4" />
+                  Instagram
                 </Button>
               </a>
               <a href="#produits" onClick={() => setMobileOpen(false)}>

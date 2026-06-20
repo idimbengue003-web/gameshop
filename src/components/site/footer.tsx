@@ -1,7 +1,13 @@
-import { Waves, MessageCircle, Instagram, Heart } from "lucide-react";
-import { siteConfig, getWhatsAppLink } from "@/config/site";
+"use client";
 
-export function Footer() {
+import { Waves, Instagram, Heart, Settings } from "lucide-react";
+import { siteConfig } from "@/config/site";
+
+interface FooterProps {
+  onAdminClick?: () => void;
+}
+
+export function Footer({ onAdminClick }: FooterProps) {
   const year = new Date().getFullYear();
 
   return (
@@ -10,12 +16,20 @@ export function Footer() {
         <div className="grid md:grid-cols-4 gap-8">
           {/* Brand */}
           <div className="md:col-span-2">
-            <div className="flex items-center gap-2 mb-3">
+            <div className="flex items-center gap-3 mb-3">
               <img
-                src="/logo.svg"
+                src="/logo/gameshop221.jpg"
                 alt="GAME SHOP 221"
-                className="h-9 w-auto brightness-0 invert"
+                className="h-11 w-11 rounded-xl object-cover ring-2 ring-slate-700"
               />
+              <div className="leading-none">
+                <div className="text-lg font-black bg-gradient-to-r from-sky-400 to-cyan-400 bg-clip-text text-transparent">
+                  GAME SHOP
+                </div>
+                <div className="text-[10px] font-bold text-slate-500 tracking-[0.3em] mt-1">
+                  2 2 1
+                </div>
+              </div>
             </div>
             <p className="text-sm text-slate-400 max-w-md leading-relaxed">
               {siteConfig.description}
@@ -29,15 +43,6 @@ export function Footer() {
                 aria-label="Instagram"
               >
                 <Instagram className="h-4 w-4" />
-              </a>
-              <a
-                href={getWhatsAppLink("Bonjour GAME SHOP 221 👋")}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-9 h-9 rounded-full bg-slate-800 hover:bg-green-600 flex items-center justify-center transition-colors"
-                aria-label="WhatsApp"
-              >
-                <MessageCircle className="h-4 w-4" />
               </a>
               <a
                 href="wave://"
@@ -85,10 +90,6 @@ export function Footer() {
                 <span>Wave : {siteConfig.waveNumberDisplay}</span>
               </li>
               <li className="flex items-center gap-2">
-                <MessageCircle className="h-4 w-4 text-green-400" />
-                <span>WhatsApp : {siteConfig.whatsappDisplay}</span>
-              </li>
-              <li className="flex items-center gap-2">
                 <Instagram className="h-4 w-4 text-pink-400" />
                 <span>{siteConfig.instagramHandle}</span>
               </li>
@@ -101,9 +102,19 @@ export function Footer() {
           <p>
             © {year} {siteConfig.name}. Tous droits réservés.
           </p>
-          <p className="flex items-center gap-1.5">
-            Fait avec <Heart className="h-3.5 w-3.5 text-red-500 fill-current" /> au Sénégal 🇸🇳
-          </p>
+          <div className="flex items-center gap-4">
+            <p className="flex items-center gap-1.5">
+              Fait avec <Heart className="h-3.5 w-3.5 text-red-500 fill-current" /> au Sénégal 🇸🇳
+            </p>
+            <button
+              onClick={onAdminClick}
+              className="flex items-center gap-1 hover:text-slate-300 transition-colors"
+              title="Accès admin"
+            >
+              <Settings className="h-3.5 w-3.5" />
+              Admin
+            </button>
+          </div>
         </div>
       </div>
     </footer>

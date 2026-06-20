@@ -1,5 +1,5 @@
 import { Card } from "@/components/ui/card";
-import { Waves, MessageCircle, Package, ArrowRight } from "lucide-react";
+import { Waves, Lock, Package, Zap, ArrowRight, Clock } from "lucide-react";
 
 export function OrderGuide() {
   const steps = [
@@ -7,7 +7,7 @@ export function OrderGuide() {
       num: "1",
       icon: Package,
       title: "Choisissez votre produit",
-      desc: "Parcourez le catalogue : comptes, recharges UC/diamants/VP ou cartes cadeaux. Cliquez sur « Commander ».",
+      desc: "Parcourez le catalogue : comptes, recharges UC/diamants/VP ou cartes cadeaux. Repérez le badge ⚡ pour les produits à livraison automatique.",
       color: "from-sky-500 to-sky-600",
     },
     {
@@ -19,10 +19,10 @@ export function OrderGuide() {
     },
     {
       num: "3",
-      icon: MessageCircle,
-      title: "Confirmez sur WhatsApp",
-      desc: "Faites une capture du paiement et envoyez-la via le bouton WhatsApp. On vous livre en 5 à 30 minutes.",
-      color: "from-green-500 to-emerald-600",
+      icon: Zap,
+      title: "Recevez votre commande",
+      desc: "Cliquez sur « J'ai payé ». Pour les produits ⚡, votre code/compte s'affiche immédiatement. Sinon, traitement sous le délai indiqué.",
+      color: "from-amber-500 to-orange-500",
     },
   ];
 
@@ -40,8 +40,10 @@ export function OrderGuide() {
             Commandez en 3 étapes simples
           </h2>
           <p className="mt-3 text-slate-600 max-w-2xl mx-auto">
-            Pas besoin de créer un compte. Pas besoin de carte bancaire.
-            Réglez directement avec Wave et recevez votre commande sur WhatsApp.
+            Pas besoin de WhatsApp. Pas besoin d'attendre. Réglez avec Wave et
+            recevez votre commande{" "}
+            <strong className="text-amber-600">automatiquement sur le site ⚡</strong>
+            .
           </p>
         </div>
 
@@ -85,13 +87,33 @@ export function OrderGuide() {
           })}
         </div>
 
-        {/* Note bas */}
-        <div className="mt-10 max-w-2xl mx-auto bg-sky-50 border border-sky-100 rounded-xl p-5 text-center">
-          <p className="text-sm text-slate-700">
-            <strong className="text-sky-800">💡 Astuce :</strong> Pour accélérer la
-            livraison des recharges (UC, diamants, VP), indiquez votre ID joueur
-            dans la fenêtre de commande avant de payer.
-          </p>
+        {/* Bandeau explicatif livraison */}
+        <div className="mt-10 grid sm:grid-cols-2 gap-4 max-w-3xl mx-auto">
+          <div className="rounded-xl bg-amber-50 border-2 border-amber-200 p-5">
+            <div className="flex items-center gap-2 mb-2">
+              <Zap className="h-5 w-5 text-amber-600 fill-amber-500" />
+              <h3 className="font-bold text-amber-900">
+                Produits ⚡ Instantané
+              </h3>
+            </div>
+            <p className="text-sm text-amber-800">
+              Le contenu (code, identifiants compte) s'affiche immédiatement sur
+              le site après confirmation du paiement Wave. Aucune attente, aucun
+              échange.
+            </p>
+          </div>
+
+          <div className="rounded-xl bg-sky-50 border-2 border-sky-200 p-5">
+            <div className="flex items-center gap-2 mb-2">
+              <Clock className="h-5 w-5 text-sky-600" />
+              <h3 className="font-bold text-sky-900">Produits à délai</h3>
+            </div>
+            <p className="text-sm text-sky-800">
+              Certains comptes nécessitent une préparation manuelle. Le délai
+              estimé est affiché sur la fiche produit. Vous serez notifié(e)
+              quand votre commande est prête.
+            </p>
+          </div>
         </div>
       </div>
     </section>
