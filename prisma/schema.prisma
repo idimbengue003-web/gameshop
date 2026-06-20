@@ -1,12 +1,12 @@
 // Prisma schema — GAME SHOP 221
-// Run: bun run db:push
+// Supporte SQLite (local) et PostgreSQL (Vercel)
 
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -19,17 +19,15 @@ model Product {
   description      String
   price            Int
   oldPrice         Int?
-  category         String // "comptes" | "recharges" | "cartes"
+  category         String
   game             String?
   emoji            String   @default("🎮")
-  badge            String?  // "PROMO" | "POPULAIRE" | "TOP VENTE" | "ÉCONOMIE"
+  badge            String?
   popular          Boolean  @default(false)
   instantDelivery  Boolean  @default(false)
-  // Si productUniqueCodes=true : on puise les codes dans CodeItem (1 code = 1 vente)
-  // Si false : on délivre deliveryContent (texte fixe, ex: identifiants partagés)
   useUniqueCodes   Boolean  @default(false)
-  deliveryContent  String?  // contenu livré si !useUniqueCodes
-  deliveryTime     String?  // délai si !instantDelivery
+  deliveryContent  String?
+  deliveryTime     String?
   stock            Int      @default(0)
   active           Boolean  @default(true)
   createdAt        DateTime @default(now())
@@ -48,14 +46,14 @@ model Product {
 model CodeItem {
   id          String   @id @default(cuid())
   productId   String
-  content     String   // le code/identifiants à livrer
-  status      String   @default("available") // "available" | "reserved" | "sold"
-  orderId     String?
+  content     String
+  status      String   @default("available")
+  orderId     String?  @unique
   createdAt   DateTime @default(now())
   soldAt      DateTime?
 
   product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
-  order   Order?
+  order   Order?  @relation(fields: [orderId], references: [id])
 
   @@index([productId, status])
   @@index([status])
@@ -65,18 +63,18 @@ model CodeItem {
 // COMMANDES
 // ============================================================
 model Order {
-  id            String   @id @default(cuid())
-  ref           String   @unique // ex: CMD-AB12C3-12345
-  productId     String
-  customerName  String?
-  customerPhone String?
-  playerId      String?  // ID joueur / email compte
-  waveTxId      String?  // ID transaction Wave (saisi par client)
-  amount        Int      // montant payé
-  status        String   @default("delivered") // "delivered" | "pending" | "failed"
-  deliveredContent String? // contenu livré (snapshot)
-  deliveredCodeId  String? @unique
-  createdAt     DateTime @default(now())
+  id               String   @id @default(cuid())
+  ref              String   @unique
+  productId        String
+  customerName     String?
+  customerPhone    String?
+  playerId         String?
+  waveTxId         String?
+  amount           Int
+  status           String   @default("delivered")
+  deliveredContent String?
+  deliveredCodeId  String?  @unique
+  createdAt        DateTime @default(now())
 
   product Product   @relation(fields: [productId], references: [id])
   code    CodeItem? @relation(fields: [deliveredCodeId], references: [id])
