@@ -7,10 +7,6 @@ const nextConfig: NextConfig = {
     ignoreBuildErrors: true,
   },
   reactStrictMode: false,
-  // Pour éviter les problèmes deSharp sur Vercel
-  images: {
-    minCacheTTL: 60,
-  },
 };
 
 export default nextConfig;
