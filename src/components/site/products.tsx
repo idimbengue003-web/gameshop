@@ -66,6 +66,9 @@ export function ProductsSection({ onOrder }: ProductsSectionProps) {
     };
   }, []);
 
+  // Vérifier si la DB est configurée (réponse vide avec erreur spécifique)
+  const dbNotConfigured = products.length === 0 && !loading && !error;
+
   const filteredRaw = products.filter((p) => {
     const matchCat =
       activeCategory === "all" || p.category === activeCategory;
@@ -206,6 +209,31 @@ export function ProductsSection({ onOrder }: ProductsSectionProps) {
           <div className="text-center py-20 text-red-600">
             <PackageOpen className="h-12 w-12 mx-auto mb-3 text-red-300" />
             <p className="font-medium">{error}</p>
+          </div>
+        ) : dbNotConfigured ? (
+          <div className="text-center py-16 px-4 max-w-lg mx-auto">
+            <div className="text-5xl mb-3">🔌</div>
+            <h3 className="text-xl font-bold text-slate-900 mb-2">
+              Base de données à configurer
+            </h3>
+            <p className="text-sm text-slate-600 mb-4">
+              Le site est en ligne mais la base de données n'est pas encore
+              connectée. Les produits apparaîtront ici une fois la DB configurée
+              côté Vercel.
+            </p>
+            <div className="rounded-lg bg-slate-50 border border-slate-200 p-4 text-left text-xs text-slate-600">
+              <p className="font-semibold mb-1">📋 Étapes :</p>
+              <ol className="list-decimal list-inside space-y-1">
+                <li>Créer une DB Postgres (Neon, Supabase ou Vercel Postgres)</li>
+                <li>
+                  Ajouter <code className="bg-white px-1 rounded">DATABASE_URL</code> dans Vercel
+                </li>
+                <li>
+                  Lancer <code className="bg-white px-1 rounded">bun run db:push &amp;&amp; bun run seed</code>
+                </li>
+                <li>Redéployer</li>
+              </ol>
+            </div>
           </div>
         ) : filtered.length === 0 ? (
           <div className="text-center py-20 text-slate-500">

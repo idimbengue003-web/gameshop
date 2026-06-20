@@ -7,6 +7,19 @@ export async function GET(req: NextRequest) {
     const { searchParams } = new URL(req.url);
     const admin = searchParams.get("admin");
 
+    // Vérifier que la DB est configurée
+    if (!process.env.DATABASE_URL || process.env.DATABASE_URL.includes("placeholder")) {
+      return NextResponse.json(
+        {
+          products: [],
+          error: "DB_NOT_CONFIGURED",
+          message:
+            "Base de données non configurée. Voir README pour configurer DATABASE_URL.",
+        },
+        { status: 200 }
+      );
+    }
+
     const products = await db.product.findMany({
       where: admin === "true" ? {} : { active: true },
       orderBy: [{ popular: "desc" }, { createdAt: "asc" }],
@@ -29,7 +42,7 @@ export async function GET(req: NextRequest) {
   } catch (error) {
     console.error("Erreur GET /api/products:", error);
     return NextResponse.json(
-      { error: "Erreur lors de la récupération des produits" },
+      { products: [], error: "Erreur lors de la récupération des produits" },
       { status: 500 }
     );
   }
