@@ -2,12 +2,19 @@
 
 Boutique e-commerce gaming au Sénégal — Comptes, UC, cartes cadeaux. Paiement Wave, livraison automatique.
 
+## 🌐 Production
+
+- **URL** : https://gameshop221.vercel.app
+- **Repo** : https://github.com/idimbengue003-web/gameshop
+- **Admin** : https://gameshop221.vercel.app/#admin (mdp: `admin221`)
+- **Suivi commande** : https://gameshop221.vercel.app/#suivi
+
 ## 🚀 Stack technique
 
 - **Next.js 16** (App Router) + TypeScript
 - **Tailwind CSS 4** + shadcn/ui
-- **Prisma ORM** + PostgreSQL (Vercel Postgres)
-- **Vercel** (déploiement)
+- **Prisma ORM** + PostgreSQL (Neon)
+- **Vercel** (déploiement + auto-deploy GitHub)
 
 ## 📦 Fonctionnalités
 
@@ -26,7 +33,7 @@ Boutique e-commerce gaming au Sénégal — Comptes, UC, cartes cadeaux. Paiemen
 # 1. Installer les dépendances
 bun install
 
-# 2. Configurer l'environnement
+# 2. Configurer l'environnement (SQLite local ou Neon)
 cp .env.example .env
 # Éditer .env avec votre DATABASE_URL
 
@@ -44,14 +51,6 @@ Modifiez `src/config/site.ts` pour personnaliser :
 - Numéro Wave
 - Mot de passe admin (défaut : `admin221`)
 - Lien Instagram
-
-## 🌐 Déploiement Vercel
-
-1. Connectez le repo à Vercel
-2. Ajoutez les variables d'environnement :
-   - `DATABASE_URL` (Vercel Postgres)
-3. Déployez
-4. Exécutez le seed : `bun run seed` avec la DB Postgres
 
 ## 📁 Structure
 
@@ -71,3 +70,4 @@ src/
 ## 📝 License
 
 Propriétaire — © GAME SHOP 221
+
