@@ -1,5 +1,5 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
+// Prisma schema — GAME SHOP 221
+// Run: bun run db:push
 
 generator client {
   provider = "prisma-client-js"
@@ -10,6 +10,9 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// ============================================================
+// PRODUITS
+// ============================================================
 model Product {
   id               String   @id @default(cuid())
   name             String
@@ -22,13 +25,63 @@ model Product {
   badge            String?  // "PROMO" | "POPULAIRE" | "TOP VENTE" | "ÉCONOMIE"
   popular          Boolean  @default(false)
   instantDelivery  Boolean  @default(false)
-  deliveryContent  String?  // code/compte affiché après paiement si instantDelivery
-  deliveryTime     String?  // délai affiché si pas instantané (ex: "5-30 min", "24-48h")
-  stock            Int      @default(0) // pour info, pas géré strictement
+  // Si productUniqueCodes=true : on puise les codes dans CodeItem (1 code = 1 vente)
+  // Si false : on délivre deliveryContent (texte fixe, ex: identifiants partagés)
+  useUniqueCodes   Boolean  @default(false)
+  deliveryContent  String?  // contenu livré si !useUniqueCodes
+  deliveryTime     String?  // délai si !instantDelivery
+  stock            Int      @default(0)
   active           Boolean  @default(true)
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
 
+  codes   CodeItem[]
+  orders  Order[]
+
   @@index([category])
   @@index([active])
+}
+
+// ============================================================
+// CODES UNIQUES (stock par produit)
+// ============================================================
+model CodeItem {
+  id          String   @id @default(cuid())
+  productId   String
+  content     String   // le code/identifiants à livrer
+  status      String   @default("available") // "available" | "reserved" | "sold"
+  orderId     String?
+  createdAt   DateTime @default(now())
+  soldAt      DateTime?
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  order   Order?
+
+  @@index([productId, status])
+  @@index([status])
+}
+
+// ============================================================
+// COMMANDES
+// ============================================================
+model Order {
+  id            String   @id @default(cuid())
+  ref           String   @unique // ex: CMD-AB12C3-12345
+  productId     String
+  customerName  String?
+  customerPhone String?
+  playerId      String?  // ID joueur / email compte
+  waveTxId      String?  // ID transaction Wave (saisi par client)
+  amount        Int      // montant payé
+  status        String   @default("delivered") // "delivered" | "pending" | "failed"
+  deliveredContent String? // contenu livré (snapshot)
+  deliveredCodeId  String? @unique
+  createdAt     DateTime @default(now())
+
+  product Product   @relation(fields: [productId], references: [id])
+  code    CodeItem? @relation(fields: [deliveredCodeId], references: [id])
+
+  @@index([ref])
+  @@index([createdAt])
+  @@index([status])
 }

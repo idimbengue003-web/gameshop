@@ -1,6 +1,5 @@
 // Types partagés pour les produits
-// Les produits sont maintenant stockés en base de données (Prisma + SQLite)
-// et gérés via le panneau admin accessible sur /#admin
+// Les produits sont stockés en base de données (Prisma + SQLite)
 
 export type ProductCategory = "comptes" | "recharges" | "cartes";
 
@@ -16,6 +15,7 @@ export interface Product {
   badge?: string | null;
   popular: boolean;
   instantDelivery: boolean;
+  useUniqueCodes: boolean;
   deliveryContent?: string | null;
   deliveryTime?: string | null;
   stock: number;
@@ -36,11 +36,44 @@ export const categoryEmojis: Record<ProductCategory, string> = {
   cartes: "🎁",
 };
 
-// Helper pour fetch les produits depuis l'API
 export async function fetchProducts(admin = false): Promise<Product[]> {
   const url = admin ? "/api/products?admin=true" : "/api/products";
   const res = await fetch(url, { cache: "no-store" });
   if (!res.ok) throw new Error("Erreur lors du chargement des produits");
   const data = await res.json();
   return data.products as Product[];
+}
+
+// Statut commande (snapshot pour l'UI)
+export type OrderStatus = "delivered" | "pending" | "failed";
+
+export interface OrderSnapshot {
+  ref: string;
+  status: OrderStatus;
+  amount: number;
+  customerName?: string | null;
+  playerId?: string | null;
+  waveTxId?: string | null;
+  createdAt: string;
+  deliveredContent?: string | null;
+  product: {
+    name: string;
+    emoji: string;
+    game?: string | null;
+    category: string;
+    instantDelivery: boolean;
+    deliveryTime?: string | null;
+  };
+}
+
+export async function fetchOrder(ref: string): Promise<OrderSnapshot> {
+  const res = await fetch(`/api/orders/${encodeURIComponent(ref)}`, {
+    cache: "no-store",
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.error || "Commande introuvable");
+  }
+  const data = await res.json();
+  return data.order as OrderSnapshot;
 }

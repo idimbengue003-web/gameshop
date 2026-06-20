@@ -9,11 +9,12 @@ import { WhyUs } from "@/components/site/why-us";
 import { Contact } from "@/components/site/contact";
 import { Footer } from "@/components/site/footer";
 import { OrderModal } from "@/components/site/order-modal";
+import { OrderTracking } from "@/components/site/order-tracking";
 import { AdminLogin } from "@/components/admin/admin-login";
 import { AdminPanel } from "@/components/admin/admin-panel";
 import { Product } from "@/data/products";
 
-type View = "site" | "admin-login" | "admin";
+type View = "site" | "tracking" | "admin-login" | "admin";
 
 export default function Home() {
   const [view, setView] = useState<View>("site");
@@ -21,13 +22,16 @@ export default function Home() {
   const [modalOpen, setModalOpen] = useState(false);
   const productsRef = useRef<HTMLDivElement>(null);
 
-  // Gestion du hash #admin
+  // Gestion des hashes: #admin, #suivi
   useEffect(() => {
     const checkHash = () => {
-      const isHashAdmin = window.location.hash === "#admin";
+      const hash = window.location.hash;
       const isAdminAuthed = sessionStorage.getItem("gs221_admin") === "1";
-      if (isHashAdmin) {
+
+      if (hash.startsWith("#admin")) {
         setView(isAdminAuthed ? "admin" : "admin-login");
+      } else if (hash.startsWith("#suivi")) {
+        setView("tracking");
       } else {
         setView("site");
       }
@@ -42,14 +46,18 @@ export default function Home() {
     window.location.hash = "#admin";
   };
 
-  const exitAdmin = () => {
+  const goToTracking = () => {
+    window.location.hash = "#suivi";
+  };
+
+  const exitToSite = () => {
     window.location.hash = "";
     setView("site");
   };
 
   const handleAdminLogout = () => {
     sessionStorage.removeItem("gs221_admin");
-    exitAdmin();
+    exitToSite();
   };
 
   const handleOrder = (product: Product) => {
@@ -64,21 +72,19 @@ export default function Home() {
     }
   };
 
+  // ========== VUE SUIVI COMMANDE ==========
+  if (view === "tracking") {
+    return <OrderTracking onBack={exitToSite} />;
+  }
+
   // ========== VUE ADMIN LOGIN ==========
   if (view === "admin-login") {
-    return (
-      <AdminLogin
-        onSuccess={() => setView("admin")}
-        onBack={exitAdmin}
-      />
-    );
+    return <AdminLogin onSuccess={() => setView("admin")} onBack={exitToSite} />;
   }
 
   // ========== VUE ADMIN PANEL ==========
   if (view === "admin") {
-    return (
-      <AdminPanel onLogout={handleAdminLogout} onExitToSite={exitAdmin} />
-    );
+    return <AdminPanel onLogout={handleAdminLogout} onExitToSite={exitToSite} />;
   }
 
   // ========== VUE SITE CLIENT ==========
@@ -95,6 +101,23 @@ export default function Home() {
 
         <OrderGuide />
         <WhyUs />
+
+        {/* Bandeau suivi commande */}
+        <section className="py-8 bg-gradient-to-r from-sky-50 to-cyan-50 border-t border-sky-100">
+          <div className="container mx-auto px-4 max-w-7xl text-center">
+            <p className="text-sm text-slate-600 mb-3">
+              🔍 Vous avez déjà commandé ? Suivez l'état de votre commande et
+              récupérez votre contenu livré.
+            </p>
+            <button
+              onClick={goToTracking}
+              className="inline-flex items-center gap-2 px-5 py-2.5 bg-sky-600 hover:bg-sky-700 text-white rounded-full font-medium transition-colors"
+            >
+              Suivre ma commande →
+            </button>
+          </div>
+        </section>
+
         <Contact />
       </main>
 

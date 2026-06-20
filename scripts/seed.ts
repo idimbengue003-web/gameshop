@@ -1,11 +1,29 @@
 // Seed du catalogue produits GAME SHOP 221
-// Exécuter : bun run /home/z/my-project/scripts/seed.ts
+// Exécuter : bun run scripts/seed.ts
 
 import { PrismaClient } from "@prisma/client";
 
 const db = new PrismaClient();
 
-const products = [
+type SeedProduct = {
+  name: string;
+  description: string;
+  price: number;
+  oldPrice?: number | null;
+  category: string;
+  game?: string | null;
+  emoji: string;
+  badge?: string | null;
+  popular?: boolean;
+  instantDelivery: boolean;
+  useUniqueCodes?: boolean;
+  deliveryContent?: string | null;
+  deliveryTime?: string | null;
+  // Codes uniques à insérer (si useUniqueCodes=true)
+  codes?: string[];
+};
+
+const products: SeedProduct[] = [
   // ========== COMPTES GAMING ==========
   {
     name: "Compte Fortnite OG",
@@ -18,8 +36,13 @@ const products = [
     emoji: "🎯",
     popular: true,
     instantDelivery: true,
-    deliveryContent: "Email: game_shop_221@gmail.com\nMot de passe: GameShop@221\nCode 2FA: 482 915\n\nLes skins sont déjà équipés. Changez le mot de passe après connexion.",
-    deliveryTime: null,
+    useUniqueCodes: true,
+    deliveryContent: null,
+    codes: [
+      "Email: fortnite.gs221.1@gmail.com\nMDP: Fn@221Shop\n2FA: 482-915",
+      "Email: fortnite.gs221.2@gmail.com\nMDP: Fn@221Shop\n2FA: 736-204",
+      "Email: fortnite.gs221.3@gmail.com\nMDP: Fn@221Shop\n2FA: 918-567",
+    ],
   },
   {
     name: "Compte Valorant",
@@ -28,9 +51,7 @@ const products = [
     category: "comptes",
     game: "Valorant",
     emoji: "🔫",
-    popular: false,
     instantDelivery: false,
-    deliveryContent: null,
     deliveryTime: "10-30 min",
   },
   {
@@ -44,8 +65,12 @@ const products = [
     emoji: "🚗",
     popular: true,
     instantDelivery: true,
-    deliveryContent: "Plateforme: PC (Steam/Epic)\nEmail: gtashop221@gmail.com\nMot de passe: GTA@Shop221\n\nLe compte est moddé. Connectez-vous en mode story d'abord puis online.",
-    deliveryTime: null,
+    useUniqueCodes: true,
+    codes: [
+      "Plateforme: PC Steam\nEmail: gtashop221.1@gmail.com\nMDP: GTA@Shop221",
+      "Plateforme: PC Steam\nEmail: gtashop221.2@gmail.com\nMDP: GTA@Shop221",
+      "Plateforme: PC Epic\nEmail: gtashop221.3@gmail.com\nMDP: GTA@Shop221",
+    ],
   },
   {
     name: "Compte PUBG Mobile",
@@ -54,9 +79,7 @@ const products = [
     category: "comptes",
     game: "PUBG Mobile",
     emoji: "🎯",
-    popular: false,
     instantDelivery: false,
-    deliveryContent: null,
     deliveryTime: "15-45 min",
   },
   {
@@ -66,9 +89,7 @@ const products = [
     category: "comptes",
     game: "Free Fire",
     emoji: "🔥",
-    popular: false,
     instantDelivery: false,
-    deliveryContent: null,
     deliveryTime: "10-30 min",
   },
   {
@@ -78,9 +99,7 @@ const products = [
     category: "comptes",
     game: "COD Mobile",
     emoji: "🎖️",
-    popular: false,
     instantDelivery: false,
-    deliveryContent: null,
     deliveryTime: "15-30 min",
   },
 
@@ -95,8 +114,8 @@ const products = [
     emoji: "💎",
     popular: true,
     instantDelivery: true,
-    deliveryContent: "Votre recharge de 325 UC est en cours de traitement automatique.\n\nConnectez-vous à PUBG Mobile avec votre ID joueur, les UC seront créditées sous 2-5 minutes.\n\nSi rien n'apparaît après 10 min, contactez-nous sur WhatsApp avec votre référence de commande.",
-    deliveryTime: null,
+    useUniqueCodes: false,
+    deliveryContent: "Votre recharge de 325 UC est en cours de traitement automatique.\n\nConnectez-vous à PUBG Mobile avec votre ID joueur, les UC seront créditées sous 2-5 minutes.\n\nSi rien n'apparaît après 10 min, contactez-nous sur Instagram @game_shop221 avec votre référence de commande.",
   },
   {
     name: "660 UC PUBG Mobile",
@@ -105,10 +124,9 @@ const products = [
     category: "recharges",
     game: "PUBG Mobile",
     emoji: "💎",
-    popular: false,
     instantDelivery: true,
+    useUniqueCodes: false,
     deliveryContent: "Votre recharge de 660 UC (+60 bonus) est en cours de traitement automatique.\n\nLes UC seront créditées sur votre compte PUBG sous 2-5 minutes.",
-    deliveryTime: null,
   },
   {
     name: "1800 UC PUBG Mobile",
@@ -119,10 +137,9 @@ const products = [
     game: "PUBG Mobile",
     badge: "ÉCONOMIE",
     emoji: "💎",
-    popular: false,
     instantDelivery: true,
+    useUniqueCodes: false,
     deliveryContent: "Votre recharge de 1800 UC (+bonus) est en cours de traitement automatique.\n\nLes UC seront créditées sous 2-5 minutes.",
-    deliveryTime: null,
   },
   {
     name: "310 Diamants Free Fire",
@@ -133,8 +150,8 @@ const products = [
     emoji: "🔥",
     popular: true,
     instantDelivery: true,
+    useUniqueCodes: false,
     deliveryContent: "Votre recharge de 310 diamants Free Fire est en cours de traitement automatique.\n\nLes diamants seront crédités sous 2-5 minutes.",
-    deliveryTime: null,
   },
   {
     name: "520 Diamants Free Fire",
@@ -143,10 +160,9 @@ const products = [
     category: "recharges",
     game: "Free Fire",
     emoji: "🔥",
-    popular: false,
     instantDelivery: true,
+    useUniqueCodes: false,
     deliveryContent: "Votre recharge de 520 diamants Free Fire est en cours de traitement automatique.\n\nLes diamants seront crédités sous 2-5 minutes.",
-    deliveryTime: null,
   },
   {
     name: "1060 Diamants Free Fire",
@@ -155,10 +171,9 @@ const products = [
     category: "recharges",
     game: "Free Fire",
     emoji: "🔥",
-    popular: false,
     instantDelivery: true,
+    useUniqueCodes: false,
     deliveryContent: "Votre recharge de 1060 diamants Free Fire est en cours de traitement automatique.\n\nLes diamants seront crédités sous 2-5 minutes.",
-    deliveryTime: null,
   },
   {
     name: "1000 VP Valorant",
@@ -167,10 +182,9 @@ const products = [
     category: "recharges",
     game: "Valorant",
     emoji: "🔫",
-    popular: false,
     instantDelivery: true,
+    useUniqueCodes: false,
     deliveryContent: "Votre recharge de 1000 VP Valorant est en cours de traitement automatique.\n\nLes VP seront crédités sur votre compte sous 5-10 minutes.",
-    deliveryTime: null,
   },
   {
     name: "400 CP Call of Duty Mobile",
@@ -179,10 +193,9 @@ const products = [
     category: "recharges",
     game: "COD Mobile",
     emoji: "🎖️",
-    popular: false,
     instantDelivery: true,
+    useUniqueCodes: false,
     deliveryContent: "Votre recharge de 400 CP COD Mobile est en cours de traitement automatique.\n\nLes CP seront crédités sous 5-10 minutes.",
-    deliveryTime: null,
   },
   {
     name: "1000 V-Bucks Fortnite",
@@ -191,24 +204,29 @@ const products = [
     category: "recharges",
     game: "Fortnite",
     emoji: "🎯",
-    popular: false,
     instantDelivery: true,
+    useUniqueCodes: false,
     deliveryContent: "Votre recharge de 1000 V-Bucks Fortnite est en cours de traitement automatique.\n\nLes V-Bucks seront crédités sous 5-10 minutes.",
-    deliveryTime: null,
   },
 
-  // ========== CARTES CADEAUX ==========
+  // ========== CARTES CADEAUX (codes uniques, 1 par vente) ==========
   {
     name: "Carte Steam 10€",
-    description: "Carte cadeau Steam 10€. Code envoyé automatiquement après paiement.",
+    description: "Carte cadeau Steam 10€. Code unique envoyé automatiquement après paiement.",
     price: 7500,
     category: "cartes",
     game: "Steam",
     emoji: "🎮",
     popular: true,
     instantDelivery: true,
-    deliveryContent: "🎮 CODE CARTE STEAM 10€\n\nCode: 5X7Y-9PZK-3M2N\n\nComment l'utiliser:\n1. Ouvrez Steam\n2. Cliquez sur 'Jeux' → 'Activer un produit sur Steam'\n3. Suivez les instructions et entrez le code\n4. Le montant sera crédité sur votre compte Steam",
-    deliveryTime: null,
+    useUniqueCodes: true,
+    codes: [
+      "🎮 CODE STEAM 10€\n\nCode: 5X7Y-9PZK-3M2N",
+      "🎮 CODE STEAM 10€\n\nCode: 7K3M-P9RZ-2QXN",
+      "🎮 CODE STEAM 10€\n\nCode: 4F8J-N2RT-6K5P",
+      "🎮 CODE STEAM 10€\n\nCode: 9PZQ-X3MR-7K2N",
+      "🎮 CODE STEAM 10€\n\nCode: 2KRT-8M5N-9PZQ",
+    ],
   },
   {
     name: "Carte Steam 25€",
@@ -219,10 +237,13 @@ const products = [
     game: "Steam",
     badge: "PROMO",
     emoji: "🎮",
-    popular: false,
     instantDelivery: true,
-    deliveryContent: "🎮 CODE CARTE STEAM 25€\n\nCode: 8KQF-4RTY-6WZP\n\nComment l'utiliser:\n1. Ouvrez Steam\n2. Cliquez sur 'Jeux' → 'Activer un produit sur Steam'\n3. Suivez les instructions et entrez le code",
-    deliveryTime: null,
+    useUniqueCodes: true,
+    codes: [
+      "🎮 CODE STEAM 25€\n\nCode: 8KQF-4RTY-6WZP",
+      "🎮 CODE STEAM 25€\n\nCode: 3M9N-7K2P-X4RT",
+      "🎮 CODE STEAM 25€\n\nCode: 5PZQ-9K2M-R4T8",
+    ],
   },
   {
     name: "Carte Google Play 15€",
@@ -231,10 +252,13 @@ const products = [
     category: "cartes",
     game: "Google Play",
     emoji: "📱",
-    popular: false,
     instantDelivery: true,
-    deliveryContent: "📱 CODE GOOGLE PLAY 15€\n\nCode: 4G7H-2J3K-8M9N-1PQR\n\nComment l'utiliser:\n1. Ouvrez Play Store\n2. Menu → 'Utiliser un code'\n3. Saisissez le code ci-dessus",
-    deliveryTime: null,
+    useUniqueCodes: true,
+    codes: [
+      "📱 CODE GOOGLE PLAY 15€\n\nCode: 4G7H-2J3K-8M9N-1PQR",
+      "📱 CODE GOOGLE PLAY 15€\n\nCode: 7K2M-9P4Q-R6T8-V3WX",
+      "📱 CODE GOOGLE PLAY 15€\n\nCode: 5N8Q-2K4M-9P7R-T1WX",
+    ],
   },
   {
     name: "Carte Google Play 25€",
@@ -243,10 +267,12 @@ const products = [
     category: "cartes",
     game: "Google Play",
     emoji: "📱",
-    popular: false,
     instantDelivery: true,
-    deliveryContent: "📱 CODE GOOGLE PLAY 25€\n\nCode: 7K2M-9P4Q-R6T8-V3WX\n\nComment l'utiliser:\n1. Ouvrez Play Store\n2. Menu → 'Utiliser un code'\n3. Saisissez le code ci-dessus",
-    deliveryTime: null,
+    useUniqueCodes: true,
+    codes: [
+      "📱 CODE GOOGLE PLAY 25€\n\nCode: 7K2M-9P4Q-R6T8-V3WX",
+      "📱 CODE GOOGLE PLAY 25€\n\nCode: 4P7N-2K5M-9Q8R-T3WX",
+    ],
   },
   {
     name: "Carte PSN 10€",
@@ -255,10 +281,13 @@ const products = [
     category: "cartes",
     game: "PlayStation",
     emoji: "🎮",
-    popular: false,
     instantDelivery: true,
-    deliveryContent: "🎮 CODE PSN 10€\n\nCode: 9F2K-4P7M-Q3R8\n\nComment l'utiliser:\n1. Sur votre PS4/PS5, allez dans PlayStation Store\n2. En bas : 'Utiliser un code'\n3. Saisissez le code ci-dessus",
-    deliveryTime: null,
+    useUniqueCodes: true,
+    codes: [
+      "🎮 CODE PSN 10€\n\nCode: 9F2K-4P7M-Q3R8",
+      "🎮 CODE PSN 10€\n\nCode: 7K5P-2M9N-R4T8",
+      "🎮 CODE PSN 10€\n\nCode: 3N8Q-5K2M-9P7R",
+    ],
   },
   {
     name: "Carte iTunes 25$",
@@ -267,10 +296,13 @@ const products = [
     category: "cartes",
     game: "Apple",
     emoji: "🍎",
-    popular: false,
     instantDelivery: true,
-    deliveryContent: "🍎 CODE ITUNES 25$\n\nCode: X9K7M2P4Q8RTVW\n\nComment l'utiliser:\n1. Ouvrez l'App Store ou iTunes\n2. Cliquez sur 'Utiliser un code cadeau'\n3. Saisissez le code ci-dessus",
-    deliveryTime: null,
+    useUniqueCodes: true,
+    codes: [
+      "🍎 CODE ITUNES 25$\n\nCode: X9K7M2P4Q8RTVW",
+      "🍎 CODE ITUNES 25$\n\nCode: 4P9K7M2Q3R8T5V",
+      "🍎 CODE ITUNES 25$\n\nCode: 7K2M9P4Q8R5T3V1",
+    ],
   },
   {
     name: "Netflix 1 Mois Premium",
@@ -282,8 +314,12 @@ const products = [
     emoji: "🎬",
     popular: true,
     instantDelivery: true,
-    deliveryContent: "🎬 COMPTE NETFLIX PREMIUM 4K - 1 MOIS\n\nEmail: netflixgs221@gmail.com\nMot de passe: Netflix@221\n\nVotre profil dédié: 'GS221-User'\n\nQualité: 4K Ultra HD + HDR\nÉcrans simultanés: 4\nNe modifiez PAS le mot de passe.",
-    deliveryTime: null,
+    useUniqueCodes: true,
+    codes: [
+      "🎬 NETFLIX PREMIUM 4K - 1 MOIS\n\nEmail: netflixgs221.1@gmail.com\nMDP: Netflix@221\nProfil: 'GS221-User1'",
+      "🎬 NETFLIX PREMIUM 4K - 1 MOIS\n\nEmail: netflixgs221.2@gmail.com\nMDP: Netflix@221\nProfil: 'GS221-User2'",
+      "🎬 NETFLIX PREMIUM 4K - 1 MOIS\n\nEmail: netflixgs221.3@gmail.com\nMDP: Netflix@221\nProfil: 'GS221-User3'",
+    ],
   },
   {
     name: "Spotify Premium 3 Mois",
@@ -292,10 +328,12 @@ const products = [
     category: "cartes",
     game: "Spotify",
     emoji: "🎵",
-    popular: false,
     instantDelivery: true,
-    deliveryContent: "🎵 COMPTE SPOTIFY PREMIUM - 3 MOIS\n\nEmail: spotifygs221@gmail.com\nMot de passe: Spotify@221\n\nPremium actif pour 90 jours.\nNe modifiez PAS le mot de passe.",
-    deliveryTime: null,
+    useUniqueCodes: true,
+    codes: [
+      "🎵 SPOTIFY PREMIUM - 3 MOIS\n\nEmail: spotifygs221.1@gmail.com\nMDP: Spotify@221",
+      "🎵 SPOTIFY PREMIUM - 3 MOIS\n\nEmail: spotifygs221.2@gmail.com\nMDP: Spotify@221",
+    ],
   },
 ];
 
@@ -303,10 +341,14 @@ async function main() {
   console.log(`Seed: ${products.length} produits a inserer...`);
 
   await db.product.deleteMany({});
-  console.log("Anciens produits supprimes");
+  await db.codeItem.deleteMany({});
+  await db.order.deleteMany({});
+  console.log("Anciennes donnees supprimees (products, codes, orders)");
+
+  let totalCodes = 0;
 
   for (const p of products) {
-    await db.product.create({
+    const product = await db.product.create({
       data: {
         name: p.name,
         description: p.description,
@@ -316,21 +358,39 @@ async function main() {
         game: p.game ?? null,
         emoji: p.emoji,
         badge: p.badge ?? null,
-        popular: p.popular,
+        popular: p.popular ?? false,
         instantDelivery: p.instantDelivery,
+        useUniqueCodes: p.useUniqueCodes ?? false,
         deliveryContent: p.deliveryContent ?? null,
         deliveryTime: p.deliveryTime ?? null,
-        stock: 99,
+        stock: p.codes?.length ?? 99,
         active: true,
       },
     });
+
+    if (p.useUniqueCodes && p.codes && p.codes.length > 0) {
+      for (const content of p.codes) {
+        await db.codeItem.create({
+          data: {
+            productId: product.id,
+            content,
+            status: "available",
+          },
+        });
+        totalCodes++;
+      }
+    }
   }
 
   const count = await db.product.count();
-  console.log(`${count} produits inseres`);
-
+  const codeCount = await db.codeItem.count();
   const instant = await db.product.count({ where: { instantDelivery: true } });
+  const uniqueProducts = await db.product.count({ where: { useUniqueCodes: true } });
+
+  console.log(`${count} produits inseres`);
   console.log(`${instant} produits en livraison instantanee`);
+  console.log(`${uniqueProducts} produits utilisant des codes uniques`);
+  console.log(`${codeCount} codes uniques en stock`);
 }
 
 main()

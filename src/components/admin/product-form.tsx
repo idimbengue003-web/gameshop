@@ -22,7 +22,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Product, ProductCategory, categoryLabels } from "@/data/products";
-import { Loader2, Save, Zap, Clock } from "lucide-react";
+import { Loader2, Save, Zap, Clock, KeyRound } from "lucide-react";
 
 interface ProductFormProps {
   open: boolean;
@@ -42,6 +42,7 @@ const emptyForm = {
   badge: "",
   popular: false,
   instantDelivery: true,
+  useUniqueCodes: false,
   deliveryContent: "",
   deliveryTime: "",
   stock: "99",
@@ -71,6 +72,7 @@ export function ProductForm({
         badge: product.badge || "",
         popular: product.popular,
         instantDelivery: product.instantDelivery,
+        useUniqueCodes: product.useUniqueCodes,
         deliveryContent: product.deliveryContent || "",
         deliveryTime: product.deliveryTime || "",
         stock: String(product.stock),
@@ -101,9 +103,9 @@ export function ProductForm({
       setError("Le prix doit être supérieur à 0");
       return;
     }
-    if (form.instantDelivery && !form.deliveryContent.trim()) {
+    if (form.instantDelivery && !form.useUniqueCodes && !form.deliveryContent.trim()) {
       setError(
-        "Le contenu de livraison est requis pour les produits en livraison instantanée"
+        "Le contenu de livraison est requis (ou activez &laquo; codes uniques &raquo;)"
       );
       return;
     }
@@ -127,6 +129,7 @@ export function ProductForm({
         badge: form.badge.trim() || null,
         popular: form.popular,
         instantDelivery: form.instantDelivery,
+        useUniqueCodes: form.useUniqueCodes,
         deliveryContent: form.deliveryContent.trim() || null,
         deliveryTime: form.deliveryTime.trim() || null,
         stock: Number(form.stock) || 0,
@@ -284,7 +287,7 @@ export function ProductForm({
           </div>
 
           {/* ⚡ Livraison instantanée */}
-          <div className="rounded-xl border-2 border-sky-200 bg-sky-50 p-4 space-y-3">
+          <div className="rounded-xl border-2 border-sky-200 bg-sky-50 p-4 space-y-4">
             <div className="flex items-center justify-between">
               <div>
                 <Label
@@ -295,8 +298,7 @@ export function ProductForm({
                   Livraison instantanée ⚡
                 </Label>
                 <p className="text-xs text-slate-600 mt-1">
-                  Si activé, le contenu de livraison sera affiché automatiquement
-                  après paiement.
+                  Si activé, livraison automatique après paiement.
                 </p>
               </div>
               <Switch
@@ -306,7 +308,50 @@ export function ProductForm({
               />
             </div>
 
-            {form.instantDelivery ? (
+            {/* Mode de livraison */}
+            <div className="border-t border-sky-200 pt-3">
+              <Label className="text-sm font-medium text-slate-700 mb-2 block">
+                Type de contenu à livrer
+              </Label>
+              <div className="grid grid-cols-2 gap-2">
+                <button
+                  type="button"
+                  onClick={() => handleChange("useUniqueCodes", false)}
+                  className={`p-3 rounded-lg border-2 text-left transition-all ${
+                    !form.useUniqueCodes
+                      ? "border-sky-500 bg-white shadow-sm"
+                      : "border-slate-200 bg-slate-50 hover:border-sky-300"
+                  }`}
+                >
+                  <div className="flex items-center gap-1.5 font-medium text-sm text-slate-900">
+                    📝 Contenu fixe
+                  </div>
+                  <p className="text-xs text-slate-500 mt-1">
+                    Même contenu pour tous (instructions de recharge)
+                  </p>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleChange("useUniqueCodes", true)}
+                  className={`p-3 rounded-lg border-2 text-left transition-all ${
+                    form.useUniqueCodes
+                      ? "border-sky-500 bg-white shadow-sm"
+                      : "border-slate-200 bg-slate-50 hover:border-sky-300"
+                  }`}
+                >
+                  <div className="flex items-center gap-1.5 font-medium text-sm text-slate-900">
+                    <KeyRound className="h-3.5 w-3.5" />
+                    Codes uniques
+                  </div>
+                  <p className="text-xs text-slate-500 mt-1">
+                    1 code par vente (cartes cadeaux, comptes)
+                  </p>
+                </button>
+              </div>
+            </div>
+
+            {/* Contenu fixe */}
+            {form.instantDelivery && !form.useUniqueCodes && (
               <div>
                 <Label htmlFor="deliveryContent" className="text-sm">
                   Contenu livré automatiquement *
@@ -317,16 +362,18 @@ export function ProductForm({
                   onChange={(e) =>
                     handleChange("deliveryContent", e.target.value)
                   }
-                  placeholder="Ex: Code Steam, identifiants compte, instructions de recharge..."
-                  rows={5}
+                  placeholder="Ex: Votre recharge est en cours de traitement automatique..."
+                  rows={4}
                   className="font-mono text-sm"
                 />
                 <p className="text-xs text-slate-500 mt-1">
-                  Ce texte sera révélé au client après qu'il ait cliqué sur
-                  &laquo; J'ai payé &raquo;.
+                  Affiché au client après &laquo; J'ai payé &raquo;.
                 </p>
               </div>
-            ) : (
+            )}
+
+            {/* Délai si pas instantané */}
+            {!form.instantDelivery && (
               <div>
                 <Label
                   htmlFor="deliveryTime"
@@ -348,6 +395,15 @@ export function ProductForm({
               </div>
             )}
           </div>
+
+          {/* Note pour codes uniques */}
+          {form.useUniqueCodes && (
+            <div className="rounded-lg bg-amber-50 border border-amber-200 p-3 text-xs text-amber-800">
+              💡 <strong>Codes uniques activés.</strong> Après création, allez
+              sur la fiche produit en admin pour ajouter/gérer les codes en
+              stock. Chaque vente consommera automatiquement 1 code.
+            </div>
+          )}
 
           {/* Options avancées */}
           <div className="grid grid-cols-3 gap-3">
@@ -382,9 +438,15 @@ export function ProductForm({
                 onChange={(e) => handleChange("stock", e.target.value)}
                 min={0}
                 className="h-9"
+                disabled={form.useUniqueCodes}
               />
             </div>
           </div>
+          {form.useUniqueCodes && (
+            <p className="text-xs text-slate-500 -mt-2">
+              ℹ️ Stock auto-calculé selon le nombre de codes disponibles.
+            </p>
+          )}
 
           {error && (
             <div className="rounded-lg bg-red-50 border border-red-200 px-3 py-2 text-sm text-red-700">

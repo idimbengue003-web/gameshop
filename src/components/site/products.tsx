@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
 import {
   Product,
   ProductCategory,
@@ -21,11 +22,16 @@ import {
   Clock,
   Loader2,
   PackageOpen,
+  Search,
+  TrendingUp,
+  ArrowDownWideNarrow,
 } from "lucide-react";
 
 interface ProductsSectionProps {
   onOrder: (product: Product) => void;
 }
+
+type SortMode = "popular" | "price-asc" | "price-desc" | "instant";
 
 export function ProductsSection({ onOrder }: ProductsSectionProps) {
   const [activeCategory, setActiveCategory] = useState<ProductCategory | "all">(
@@ -34,6 +40,8 @@ export function ProductsSection({ onOrder }: ProductsSectionProps) {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [search, setSearch] = useState("");
+  const [sort, setSort] = useState<SortMode>("popular");
 
   useEffect(() => {
     let cancelled = false;
@@ -58,10 +66,34 @@ export function ProductsSection({ onOrder }: ProductsSectionProps) {
     };
   }, []);
 
-  const filtered =
-    activeCategory === "all"
-      ? products
-      : products.filter((p) => p.category === activeCategory);
+  const filteredRaw = products.filter((p) => {
+    const matchCat =
+      activeCategory === "all" || p.category === activeCategory;
+    const matchSearch =
+      !search ||
+      p.name.toLowerCase().includes(search.toLowerCase()) ||
+      (p.game || "").toLowerCase().includes(search.toLowerCase()) ||
+      p.description.toLowerCase().includes(search.toLowerCase());
+    return matchCat && matchSearch;
+  });
+
+  // Tri
+  const filtered = [...filteredRaw].sort((a, b) => {
+    switch (sort) {
+      case "price-asc":
+        return a.price - b.price;
+      case "price-desc":
+        return b.price - a.price;
+      case "instant":
+        // Instantanés d'abord, puis populaires
+        if (a.instantDelivery !== b.instantDelivery)
+          return a.instantDelivery ? -1 : 1;
+        return Number(b.popular) - Number(a.popular);
+      case "popular":
+      default:
+        return Number(b.popular) - Number(a.popular);
+    }
+  });
 
   const categories: Array<{
     key: ProductCategory | "all";
@@ -91,31 +123,77 @@ export function ProductsSection({ onOrder }: ProductsSectionProps) {
           </p>
         </div>
 
-        {/* Filtres catégories */}
-        <div className="flex flex-wrap justify-center gap-2 mb-10">
-          {categories.map((cat) => (
-            <button
-              key={cat.key}
-              onClick={() => setActiveCategory(cat.key)}
-              className={`px-4 py-2 rounded-full font-medium text-sm transition-all border-2 ${
-                activeCategory === cat.key
-                  ? "bg-sky-600 text-white border-sky-600 shadow-md shadow-sky-200"
-                  : "bg-white text-slate-700 border-slate-200 hover:border-sky-300 hover:text-sky-700"
-              }`}
-            >
-              <span className="mr-1.5">{cat.emoji}</span>
-              {cat.label}
-              {cat.key !== "all" && (
-                <span
-                  className={`ml-2 text-xs ${
-                    activeCategory === cat.key ? "text-sky-100" : "text-slate-400"
-                  }`}
-                >
-                  {products.filter((p) => p.category === cat.key).length}
-                </span>
-              )}
-            </button>
-          ))}
+        {/* Filtres catégories + recherche + tri */}
+        <div className="space-y-3 mb-8">
+          <div className="flex flex-wrap justify-center gap-2">
+            {categories.map((cat) => (
+              <button
+                key={cat.key}
+                onClick={() => setActiveCategory(cat.key)}
+                className={`px-4 py-2 rounded-full font-medium text-sm transition-all border-2 ${
+                  activeCategory === cat.key
+                    ? "bg-sky-600 text-white border-sky-600 shadow-md shadow-sky-200"
+                    : "bg-white text-slate-700 border-slate-200 hover:border-sky-300 hover:text-sky-700"
+                }`}
+              >
+                <span className="mr-1.5">{cat.emoji}</span>
+                {cat.label}
+                {cat.key !== "all" && (
+                  <span
+                    className={`ml-2 text-xs ${
+                      activeCategory === cat.key ? "text-sky-100" : "text-slate-400"
+                    }`}
+                  >
+                    {products.filter((p) => p.category === cat.key).length}
+                  </span>
+                )}
+              </button>
+            ))}
+          </div>
+
+          <div className="flex flex-col sm:flex-row gap-2 max-w-2xl mx-auto">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+              <Input
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Rechercher un jeu, un produit..."
+                className="pl-9 h-10"
+              />
+            </div>
+            <div className="flex gap-1 bg-slate-100 rounded-lg p-1">
+              <SortBtn
+                active={sort === "popular"}
+                onClick={() => setSort("popular")}
+                icon={TrendingUp}
+                label="Populaires"
+              />
+              <SortBtn
+                active={sort === "instant"}
+                onClick={() => setSort("instant")}
+                icon={Zap}
+                label="⚡ Instant"
+              />
+              <SortBtn
+                active={sort === "price-asc"}
+                onClick={() => setSort("price-asc")}
+                icon={ArrowDownWideNarrow}
+                label="Prix ↑"
+              />
+              <SortBtn
+                active={sort === "price-desc"}
+                onClick={() => setSort("price-desc")}
+                icon={ArrowDownWideNarrow}
+                label="Prix ↓"
+              />
+            </div>
+          </div>
+
+          {search && (
+            <div className="text-center text-sm text-slate-500">
+              {filtered.length} résultat(s) pour &laquo; {search} &raquo;
+            </div>
+          )}
         </div>
 
         {/* États */}
@@ -288,5 +366,31 @@ function ProductCard({
         </div>
       </div>
     </Card>
+  );
+}
+
+function SortBtn({
+  active,
+  onClick,
+  icon: Icon,
+  label,
+}: {
+  active: boolean;
+  onClick: () => void;
+  icon: React.ComponentType<{ className?: string }>;
+  label: string;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      className={`flex items-center gap-1 px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${
+        active
+          ? "bg-white text-sky-700 shadow-sm"
+          : "text-slate-600 hover:text-slate-900"
+      }`}
+    >
+      <Icon className="h-3.5 w-3.5" />
+      <span className="hidden sm:inline">{label}</span>
+    </button>
   );
 }

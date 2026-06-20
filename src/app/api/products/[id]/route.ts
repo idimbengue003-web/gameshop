@@ -40,6 +40,10 @@ export async function PUT(
           body.instantDelivery !== undefined
             ? Boolean(body.instantDelivery)
             : existing.instantDelivery,
+        useUniqueCodes:
+          body.useUniqueCodes !== undefined
+            ? Boolean(body.useUniqueCodes)
+            : existing.useUniqueCodes,
         deliveryContent:
           body.deliveryContent !== undefined
             ? body.deliveryContent || null

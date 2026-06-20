@@ -12,7 +12,20 @@ export async function GET(req: NextRequest) {
       orderBy: [{ popular: "desc" }, { createdAt: "asc" }],
     });
 
-    return NextResponse.json({ products });
+    // Pour les produits à codes uniques, recalculer le stock réel côté serveur
+    const enriched = await Promise.all(
+      products.map(async (p) => {
+        if (p.useUniqueCodes) {
+          const available = await db.codeItem.count({
+            where: { productId: p.id, status: "available" },
+          });
+          return { ...p, stock: available };
+        }
+        return p;
+      })
+    );
+
+    return NextResponse.json({ products: enriched });
   } catch (error) {
     console.error("Erreur GET /api/products:", error);
     return NextResponse.json(
@@ -27,7 +40,6 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
 
-    // Validation minimale
     if (!body.name || !body.price || !body.category) {
       return NextResponse.json(
         { error: "Champs requis manquants: name, price, category" },
@@ -47,6 +59,7 @@ export async function POST(req: NextRequest) {
         badge: body.badge || null,
         popular: Boolean(body.popular),
         instantDelivery: Boolean(body.instantDelivery),
+        useUniqueCodes: Boolean(body.useUniqueCodes),
         deliveryContent: body.deliveryContent || null,
         deliveryTime: body.deliveryTime || null,
         stock: body.stock ? Number(body.stock) : 0,
